@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 class Room(models.Model):
 
@@ -17,4 +18,11 @@ class Room(models.Model):
     address = models.CharField(max_length=250)
     pet_friendly = models.BooleanField(default=True)
     kind = models.CharField(max_length=20, choices=RoomKindChoices.choices)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     
+
+    class Amenity(models.Model):
+        
+        """Amenity Definition"""
+        name = models.CharField(max_length=150)
+        description = models.CharField(max_length=150, null=True)
