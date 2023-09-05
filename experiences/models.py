@@ -17,7 +17,7 @@ class Experience(CommonModel):
     description = models.TextField()
 
     perks = models.ManyToManyField("experiences.Perk")
-    category = models.ForeignKey("categories.Category", null=True, blank=True, on_delete=models.SET_NULL)
+    category = models.ForeignKey("categories.Category", null=True, blank=True, on_delete=models.SET_NULL, related_name="experiences",)
 
 
     def __str__(self) -> str:
