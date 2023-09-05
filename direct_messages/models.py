@@ -7,7 +7,7 @@ class ChattingRoom(CommonModel):
 
     """Room model definition"""
 
-    users = models.ManyToManyField(settings.AUTH_USER_MODEL,)
+    users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="chattingrooms")
 
     def __str__(self) -> str:
         return "Chatting Room."

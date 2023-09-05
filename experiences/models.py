@@ -9,14 +9,14 @@ class Experience(CommonModel):
     country = models.CharField(max_length=50, default="US")
     city = models.CharField(max_length=80, default="New York")
     name = models.CharField(max_length=250)
-    host = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    host = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="experiences",)
     price = models.PositiveIntegerField()
     address = models.CharField(max_length=250)
     start = models.TimeField()
     end = models.TimeField()
     description = models.TextField()
 
-    perks = models.ManyToManyField("experiences.Perk")
+    perks = models.ManyToManyField("experiences.Perk", related_name="experiences",)
     category = models.ForeignKey("categories.Category", null=True, blank=True, on_delete=models.SET_NULL, related_name="experiences",)
 
 
