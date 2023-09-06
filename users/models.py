@@ -39,7 +39,11 @@ class User(AbstractUser):
             has_rooms = Room.objects.filter(owner=instance.owner).exists()
             has_experiences = Experience.objects.filter(owner=instance.owner).exists()
 
-            # Set is_host to True if the user has at least one room or experience, 
-            # otherwise set it to False
-            instance.owner.is_host = has_rooms or has_experiences
-            instance.owner.save()
+            # Calculate the new is_host value
+            is_host = has_rooms or has_experiences
+
+            # Update is_host only for the specific user
+            instance.owner.is_host = is_host
+
+            # Use F() objects to update the is_host field without fetching the entire user object
+            User.objects.filter(pk=instance.owner.pk).update(is_host=is_host)
