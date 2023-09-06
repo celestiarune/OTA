@@ -34,14 +34,11 @@ class Room(CommonModel):
 
         
     def rating(self):
-        # Calculate the average rating using Django's aggregation
         avg_rating = self.reviews.aggregate(avg_rating=Avg('rating'))['avg_rating']
 
-        # Check if there are no reviews
         if avg_rating is None:
             return "No Reviews"
         
-        # Return the average rating rounded to two decimal places
         return round(avg_rating, 2)
 
 
