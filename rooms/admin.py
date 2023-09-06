@@ -27,8 +27,9 @@ class RoomAdmin(admin.ModelAdmin):
         "updated_at",
     )
     search_fields = (
-        "name",
-        "price",
+        # "name",
+        # "price",
+        "^owner__username",
     )
 
 
