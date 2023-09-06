@@ -7,10 +7,10 @@ def see_all_rooms(request):
     return render(
         request, 
         "all_rooms.html", 
-                  {
-                      'rooms':rooms,
-                      'title':"Hello this title is comes from Django!",
-                   }
+        {
+            'rooms':rooms,
+            'title':"Hello this title is comes from Django!",
+        }
     )
 
 def see_one_room(request, room_id):
