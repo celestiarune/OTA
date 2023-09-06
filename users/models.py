@@ -1,5 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.dispatch import receiver
+from django.db.models.signals import post_save, post_delete
+from rooms.models import Room
+from experiences.models import Experience
 
 class User(AbstractUser):
     
@@ -24,3 +28,18 @@ class User(AbstractUser):
     gender = models.CharField(max_length=10, choices=GenderChoices.choices)
     language = models.CharField(max_length=2, choices=LanguageChoices.choices)
     currency = models.CharField(max_length=5, choices=CurrencyChoices.choices)
+
+    @receiver(post_save, sender=Room)
+    @receiver(post_save, sender=Experience)
+    @receiver(post_delete, sender=Room)
+    @receiver(post_delete, sender=Experience)
+    def set_is_host(sender, instance, **kwargs):
+        if instance.owner:
+            # Check if the user has any rooms or experiences
+            has_rooms = Room.objects.filter(owner=instance.owner).exists()
+            has_experiences = Experience.objects.filter(owner=instance.owner).exists()
+
+            # Set is_host to True if the user has at least one room or experience, 
+            # otherwise set it to False
+            instance.owner.is_host = has_rooms or has_experiences
+            instance.owner.save()
