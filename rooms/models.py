@@ -3,6 +3,7 @@ from django.conf import settings
 from common.models import CommonModel
 from django.db.models import Avg
 
+
 class Room(CommonModel):
 
     """ Room Model Definition"""
@@ -53,3 +54,4 @@ class Amenity(CommonModel):
 
     class Meta:
         verbose_name_plural = "Amenities"
+

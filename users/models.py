@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
 from rooms.models import Room
 from experiences.models import Experience
 
@@ -29,21 +29,23 @@ class User(AbstractUser):
     language = models.CharField(max_length=2, choices=LanguageChoices.choices)
     currency = models.CharField(max_length=5, choices=CurrencyChoices.choices)
 
-    @receiver(post_save, sender=Room)
-    @receiver(post_save, sender=Experience)
-    @receiver(post_delete, sender=Room)
-    @receiver(post_delete, sender=Experience)
-    def set_is_host(sender, instance, **kwargs):
-        if instance.owner:
-            # Check if the user has any rooms or experiences
-            has_rooms = Room.objects.filter(owner=instance.owner).exists()
-            has_experiences = Experience.objects.filter(owner=instance.owner).exists()
 
-            # Calculate the new is_host value
-            is_host = has_rooms or has_experiences
+@receiver([post_save, post_delete], sender=Experience)
+def update_user_is_host_on_experience_change(sender, instance, **kwargs):
+    user = instance.owner
+    if user:
+        has_rooms = Room.objects.filter(owner=user).exists()
+        has_experiences = Experience.objects.filter(owner=user).exists()
+        is_host = has_rooms or has_experiences
+        user.is_host = is_host
+        user.save()
 
-            # Update is_host only for the specific user
-            instance.owner.is_host = is_host
-
-            # Use F() objects to update the is_host field without fetching the entire user object
-            User.objects.filter(pk=instance.owner.pk).update(is_host=is_host)
+@receiver([post_save, post_delete], sender=Room)
+def update_user_is_host_on_room_change(sender, instance, **kwargs):
+    user = instance.owner
+    if user:
+        has_rooms = Room.objects.filter(owner=user).exists()
+        has_experiences = Experience.objects.filter(owner=user).exists()
+        is_host = has_rooms or has_experiences
+        user.is_host = is_host
+        user.save()

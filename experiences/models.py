@@ -2,6 +2,7 @@ from django.db import models
 from common.models import CommonModel
 from django.conf import settings
 
+
 class Experience(CommonModel):
 
     """Experiences Model Definition"""
@@ -35,3 +36,5 @@ class Perk(CommonModel):
 
     def __str__(self) -> str:
         return self.name
+    
+
