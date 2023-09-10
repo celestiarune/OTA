@@ -11,6 +11,15 @@ class Rooms(APIView):
         serializer = RoomListSerializer(all_rooms, many=True)
         return Response(serializer.data)
     
+    def post(self, request):
+        serializer = RoomDetailSerializer(data=request.data)
+        if serializer.is_valid():
+            room = serializer.save()
+            serializer = RoomDetailSerializer(room)
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)
+    
 class RoomDetail(APIView):
     
     def get_object(self, pk):
@@ -69,3 +78,19 @@ class AmenityDetail(APIView):
         return Response(status=HTTP_204_NO_CONTENT)
 
 
+
+
+# {
+#     "name": "House Created with DRF",
+#     "country": "South Korea",
+#     "city": "Seoul",
+#     "price": 7000,
+#     "rooms": 2,
+#     "toilets": 3,
+#     "category": {"name":"lalalal", "kind":"kakakaka"},
+#     "amenities": [{"name":"hahaha", "description":"hihihihi"}],
+#     "description": "DRF is great 🙌🏼",
+#     "address": "Gangnam-gu, Seoul, South Korea",
+#     "pet_friendly": true,
+#     "kind": "entire_place"
+# }
