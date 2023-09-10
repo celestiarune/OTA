@@ -1,5 +1,15 @@
 from rest_framework.serializers import ModelSerializer
 from .models import Room, Amenity
+from users.siralizers import TinyUserSerializer
+
+class AmenitySerializer(ModelSerializer):
+    
+    class Meta:
+        model = Amenity
+        fields = (
+            "name",
+            "description",
+        )
 
 
 class RoomListSerializer(ModelSerializer):
@@ -15,13 +25,12 @@ class RoomListSerializer(ModelSerializer):
         )
 
 class RoomDetailSerializer(ModelSerializer):
+
+    owner = TinyUserSerializer()
+    amenities = AmenitySerializer(many=True)
+
     class Meta:
         model = Room
         fields = "__all__"
-        depth = 1
+        
 
-class AmenitySerializer(ModelSerializer):
-    
-    class Meta:
-        model = Amenity
-        fields = "__all__"
