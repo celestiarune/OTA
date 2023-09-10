@@ -1,0 +1,12 @@
+{
+    "name": "House Created with DRF",
+    "country": "South Korea",
+    "city": "Seoul",
+    "price": 7000,
+    "rooms": 2,
+    "toilets": 3,
+    "description": "DRF is great 🙌🏼",
+    "address": "Gangnam-gu, Seoul, South Korea",
+    "pet_friendly": true,
+    "kind": "entire_place"
+}
