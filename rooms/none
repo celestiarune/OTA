@@ -8,5 +8,6 @@
     "description": "DRF is great 🙌🏼",
     "address": "Gangnam-gu, Seoul, South Korea",
     "pet_friendly": true,
+    "category":2,
     "kind": "entire_place"
 }

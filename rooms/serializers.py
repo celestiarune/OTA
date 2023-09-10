@@ -34,3 +34,4 @@ class RoomDetailSerializer(ModelSerializer):
     class Meta:
         model = Room
         fields = "__all__"
+    
