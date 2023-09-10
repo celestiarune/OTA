@@ -1,6 +1,7 @@
 from rest_framework.serializers import ModelSerializer
 from .models import Room, Amenity
-from users.siralizers import TinyUserSerializer
+from users.serializers import TinyUserSerializer
+from categories.serializers import CategorySerializer
 
 class AmenitySerializer(ModelSerializer):
     
@@ -28,6 +29,7 @@ class RoomDetailSerializer(ModelSerializer):
 
     owner = TinyUserSerializer()
     amenities = AmenitySerializer(many=True)
+    category = CategorySerializer()
 
     class Meta:
         model = Room
