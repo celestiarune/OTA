@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.status import HTTP_204_NO_CONTENT
 from rest_framework.response import Response
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, NotAuthenticated
 from .models import Room, Amenity
 from .serializers import RoomListSerializer, RoomDetailSerializer, AmenitySerializer
 
@@ -12,13 +12,16 @@ class Rooms(APIView):
         return Response(serializer.data)
     
     def post(self, request):
-        serializer = RoomDetailSerializer(data=request.data)
-        if serializer.is_valid():
-            room = serializer.save()
-            serializer = RoomDetailSerializer(room)
-            return Response(serializer.data)
+        if request.user.is_authenticated:
+            serializer = RoomDetailSerializer(data=request.data)
+            if serializer.is_valid():
+                room = serializer.save(owner=request.user)
+                serializer = RoomDetailSerializer(room)
+                return Response(serializer.data)
+            else:
+                return Response(serializer.errors)
         else:
-            return Response(serializer.errors)
+            raise NotAuthenticated
     
 class RoomDetail(APIView):
     
@@ -80,17 +83,3 @@ class AmenityDetail(APIView):
 
 
 
-# {
-#     "name": "House Created with DRF",
-#     "country": "South Korea",
-#     "city": "Seoul",
-#     "price": 7000,
-#     "rooms": 2,
-#     "toilets": 3,
-#     "category": {"name":"lalalal", "kind":"kakakaka"},
-#     "amenities": [{"name":"hahaha", "description":"hihihihi"}],
-#     "description": "DRF is great 🙌🏼",
-#     "address": "Gangnam-gu, Seoul, South Korea",
-#     "pet_friendly": true,
-#     "kind": "entire_place"
-# }
