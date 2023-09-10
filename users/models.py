@@ -29,23 +29,3 @@ class User(AbstractUser):
     language = models.CharField(max_length=2, choices=LanguageChoices.choices)
     currency = models.CharField(max_length=5, choices=CurrencyChoices.choices)
 
-
-@receiver([post_save, post_delete], sender=Experience)
-def update_user_is_host_on_experience_change(sender, instance, **kwargs):
-    user = instance.owner
-    if user:
-        has_rooms = Room.objects.filter(owner=user).exists()
-        has_experiences = Experience.objects.filter(owner=user).exists()
-        is_host = has_rooms or has_experiences
-        user.is_host = is_host
-        user.save()
-
-@receiver([post_save, post_delete], sender=Room)
-def update_user_is_host_on_room_change(sender, instance, **kwargs):
-    user = instance.owner
-    if user:
-        has_rooms = Room.objects.filter(owner=user).exists()
-        has_experiences = Experience.objects.filter(owner=user).exists()
-        is_host = has_rooms or has_experiences
-        user.is_host = is_host
-        user.save()
