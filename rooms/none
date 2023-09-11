@@ -9,5 +9,6 @@
     "address": "Gangnam-gu, Seoul, South Korea",
     "pet_friendly": true,
     "category":2,
+    "amenities": [8, 9, 10, 11],
     "kind": "entire_place"
 }
