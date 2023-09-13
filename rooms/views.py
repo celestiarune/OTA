@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from django.db import transaction
 from rest_framework.status import HTTP_204_NO_CONTENT
 from rest_framework.response import Response
-from rest_framework.exceptions import NotFound, NotAuthenticated, ParseError
+from rest_framework.exceptions import NotFound, NotAuthenticated, ParseError, PermissionDenied
 from .models import Room, Amenity
 from categories.models import Category
 from .serializers import RoomListSerializer, RoomDetailSerializer, AmenitySerializer
@@ -54,6 +54,48 @@ class RoomDetail(APIView):
         room = self.get_object(pk)
         serializer = RoomDetailSerializer(room)
         return Response(serializer.data)
+    
+    def put(self, request, pk):
+        room = self.get_object(pk)
+        
+        if not request.user.is_authenticated:
+            raise NotAuthenticated
+        
+        if room.owner != request.user:
+            raise PermissionDenied
+        
+        serializer = RoomDetailSerializer(room, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            category_pk = request.data.get("category")
+            if not category_pk:
+                raise ParseError("Category input is mandatory")
+            try:
+                category = Category.objects.get(pk=category_pk)
+                if category.kind != Category.CategoryKindChoices.ROOMS:
+                    raise ParseError("The category must be rooms")
+            except category.DoesNotExist:
+                raise ParseError("Couldn't found the category")
+           
+            try:
+                with transaction.atomic():
+                    room = serializer.save(owner=request.user, category=category)
+
+                    amenities_pk = request.data.get("amenities")
+
+                
+        else:
+            return Response(serializer.errors)
+    
+    def delete(self, request, pk):
+        room = self.get_object(pk)
+        if not request.user.is_authenticated:
+            raise NotAuthenticated
+        if room.owner != request.user:
+            raise PermissionDenied
+        room.delete()
+        return Response(status=HTTP_204_NO_CONTENT)
+
 
 
 class Amenities(APIView):
