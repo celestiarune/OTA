@@ -15,6 +15,16 @@ files = [
 tests = ["mypy (>=0.800)", "pytest", "pytest-asyncio"]
 
 [[package]]
+name = "common"
+version = "0.1.2"
+description = "Common tools and data structures implemented in pure python."
+optional = false
+python-versions = "*"
+files = [
+    {file = "common-0.1.2.tar.gz", hash = "sha256:3dfa982670abefc870043b239eaa0ecd860be7aa952b1931c1356b426ff8c76a"},
+]
+
+[[package]]
 name = "django"
 version = "4.2.4"
 description = "A high-level Python web framework that encourages rapid development and clean, pragmatic design."
@@ -159,4 +169,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "dc53f779d69e7d9fa75a4b0d927634cadbea4c7b9353a06259c0eaf0ebd78ba6"
+content-hash = "07aa3f1c62ca9c2d0bd0e3f187534cb4932e9a6dcd52214040da2fe3d3b34cc7"
