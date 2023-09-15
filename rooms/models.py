@@ -38,7 +38,7 @@ class Room(CommonModel):
         avg_rating = self.reviews.aggregate(avg_rating=Avg('rating'))['avg_rating']
 
         if avg_rating is None:
-            return "No Reviews"
+            return 0
         
         return round(avg_rating, 2)
 
