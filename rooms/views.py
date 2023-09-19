@@ -7,6 +7,7 @@ from .models import Room, Amenity
 from categories.models import Category
 from .serializers import RoomListSerializer, RoomDetailSerializer, AmenitySerializer
 from reviews.serializers import ReviewSerializer
+from django.conf import settings
 
 class Rooms(APIView):
     def get(self, request):
@@ -43,6 +44,7 @@ class Rooms(APIView):
         else:
             raise NotAuthenticated
     
+
 class RoomDetail(APIView):
     
     def get_object(self, pk):
@@ -108,7 +110,6 @@ class RoomDetail(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-
 class RoomReviews(APIView):
     
 
@@ -124,12 +125,19 @@ class RoomReviews(APIView):
             page = int(page)
         except ValueError:
             page = 1
-        page_size = 3
+        page_size = settings.PAGE_SIZE
         start = (page - 1) * page_size
         end = start + page_size
         room = self.get_object(pk)
         serializer = ReviewSerializer(room.reviews.all()[start:end], many=True)
         return Response(serializer.data)
+
+
+class RoomPhotos(APIView):
+
+    def post(self, request, pk):
+        pass
+
 
 
 class Amenities(APIView):
@@ -146,6 +154,7 @@ class Amenities(APIView):
             return Response(AmenitySerializer(amenity).data)
         else:
             return Response(serializer.errors)
+
 
 
 class AmenityDetail(APIView):
