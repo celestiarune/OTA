@@ -1,15 +1,20 @@
-from rest_framework.views import APIView
-from django.db import transaction
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.exceptions import NotFound, NotAuthenticated, ParseError, PermissionDenied
-from .models import Room, Amenity
-from categories.models import Category
-from .serializers import RoomListSerializer, RoomDetailSerializer, AmenitySerializer
-from reviews.serializers import ReviewSerializer
 from django.conf import settings
-from medias.serializers import PhotoSerializer
+from django.utils import timezone
+from django.db import transaction
+
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.views import APIView
+from rest_framework.status import HTTP_204_NO_CONTENT
+from rest_framework.response import Response
+from rest_framework.exceptions import NotFound,NotAuthenticated,ParseError,PermissionDenied
+
+from .models import Amenity, Room
+from categories.models import Category
+from .serializers import AmenitySerializer, RoomListSerializer, RoomDetailSerializer
+from reviews.serializers import ReviewSerializer
+from medias.serializers import PhotoSerializer
+from bookings.models import Booking
+from bookings.serializers import PublicBookingSerializer
 
 class Rooms(APIView):
 
@@ -110,7 +115,7 @@ class RoomDetail(APIView):
         if room.owner != request.user:
             raise PermissionDenied
         room.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=HTTP_204_NO_CONTENT)
 
 
 class RoomReviews(APIView):
@@ -215,4 +220,19 @@ class AmenityDetail(APIView):
 
 
 
+class RoomBookings(APIView):
 
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_object(self, pk):
+        try:
+            return Room.objects.get(pk=pk)
+        except:
+            raise NotFound
+
+    def get(self, request, pk):
+        room = self.get_object(pk)
+        now = timezone.localtime(timezone.now()).date()
+        bookings = Booking.objects.filter(room=room, kind=Booking.BookingKindChoices.ROOM, check_in__gt=now,)
+        serializer = PublicBookingSerializer(bookings, many=True)
+        return Response(serializer.data)
